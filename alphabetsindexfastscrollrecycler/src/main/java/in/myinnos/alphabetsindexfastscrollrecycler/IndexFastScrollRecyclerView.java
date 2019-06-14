@@ -9,13 +9,15 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class IndexFastScrollRecyclerView extends RecyclerView {
 
@@ -42,6 +44,8 @@ public class IndexFastScrollRecyclerView extends RecyclerView {
     int mPreviewBackgroudColor = Color.BLACK;
     public @ColorInt
     int mPreviewTextColor = Color.WHITE;
+    @ColorInt
+    public int mBgCircleColor = Color.RED;
     public float mPreviewTransparentValue = (float) 0.4;
 
     public IndexFastScrollRecyclerView(Context context) {
@@ -61,7 +65,23 @@ public class IndexFastScrollRecyclerView extends RecyclerView {
 
     private void init(Context context, AttributeSet attrs) {
         mScroller = new IndexFastScrollRecyclerSection(context, this);
+        addOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager myLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int scrollPosition = myLayoutManager.findFirstVisibleItemPosition();
+                if (mScroller.getIndex().contains(scrollPosition)) {
+                    mScroller.updatePosition(mScroller.getIndex().indexOf(scrollPosition));
+                }
+
+            }
+        });
         if (attrs != null) {
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.IndexFastScrollRecyclerView, 0, 0);
 
@@ -108,7 +128,7 @@ public class IndexFastScrollRecyclerView extends RecyclerView {
                     if (typedArray.hasValue(R.styleable.IndexFastScrollRecyclerView_setPreviewTextColor)) {
                         mPreviewTextColor = Color.parseColor(typedArray.getString(R.styleable.IndexFastScrollRecyclerView_setPreviewTextColor));
                     }
-                    
+
                 } finally {
                     typedArray.recycle();
                 }
@@ -334,5 +354,9 @@ public class IndexFastScrollRecyclerView extends RecyclerView {
 
     public void updateSections() {
         mScroller.updateSections();
+    }
+
+    public void setBgCircleColor(int mBgCircleColor) {
+        mScroller.setBgCircleColor(mBgCircleColor);
     }
 }

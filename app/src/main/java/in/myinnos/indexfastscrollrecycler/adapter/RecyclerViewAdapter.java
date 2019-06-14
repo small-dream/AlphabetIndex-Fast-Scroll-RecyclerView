@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,10 +16,11 @@ import java.util.List;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.myinnos.alphabetsindexfastscrollrecycler.Indexer;
 import in.myinnos.indexfastscrollrecycler.R;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>
-        implements SectionIndexer {
+        implements Indexer {
 
     private List<String> mDataArray;
     private ArrayList<Integer> mSectionPositions;
@@ -77,6 +77,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public int getPositionForSection(int sectionIndex) {
         return mSectionPositions.get(sectionIndex);
+    }
+
+    @Override
+    public ArrayList<Integer> getIndex() {
+        return mSectionPositions;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

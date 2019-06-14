@@ -12,7 +12,8 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.SectionIndexer;
+
+import java.util.ArrayList;
 
 import androidx.annotation.ColorInt;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,7 +23,7 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
 
     private float mIndexbarWidth;
     private float mIndexbarMarginV;
-    private float mIndexbarMarginH=30;
+    private float mIndexbarMarginH = 30;
     private float mPreviewPadding;
     private float mDensity;
     private float mScaledDensity;
@@ -32,7 +33,7 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     private int mSelectSection = -1;
     private boolean mIsIndexing = false;
     private RecyclerView mRecyclerView = null;
-    private SectionIndexer mIndexer = null;
+    private Indexer mIndexer = null;
     private String[] mSections = null;
     private RectF mIndexbarRect;
 
@@ -59,12 +60,14 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     int previewTextColor;
     private int previewBackgroudAlpha;
     private int indexbarBackgroudAlpha;
-
+    @ColorInt
+    private int mBgCircleColor;
 
     Paint indexbarPaint;
     Paint previewPaint;
     Paint previewTextPaint;
     Paint indexPaint;
+    private Paint mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public IndexFastScrollRecyclerSection(Context context, IndexFastScrollRecyclerView rv) {
 
@@ -75,6 +78,7 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
         setPreviewTextSize = rv.mPreviewTextSize;
         previewBackgroundColor = rv.mPreviewBackgroudColor;
         previewTextColor = rv.mPreviewTextColor;
+        mBgCircleColor = rv.mBgCircleColor;
         previewBackgroudAlpha = convertTransparentValueToBackgroundAlpha(rv.mPreviewTransparentValue);
 
         setIndexBarCornerRadius = rv.mIndexBarCornerRadius;
@@ -146,16 +150,18 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
                 float paddingTop = (sectionHeight - (indexPaint.descent() - indexPaint.ascent())) / 2;
                 for (int i = 0; i < mSections.length; i++) {
                     if (setSetIndexBarHighLateTextVisibility) {
+                        float paddingLeft = (mIndexbarWidth - indexPaint.measureText(mSections[i])) / 2;
                         if (mSelectSection > -1 && i == mSelectSection) {
-                            indexPaint.setTypeface(Typeface.create(setTypeface, Typeface.BOLD));
-                            indexPaint.setTextSize((setIndexTextSize + 3) * mScaledDensity);
+                            mBgPaint.setColor(mBgCircleColor);
+                            indexPaint.setTypeface(setTypeface);
+                            indexPaint.setTextSize((setIndexTextSize) * mScaledDensity);
                             indexPaint.setColor(indexbarHighLateTextColor);
+                            canvas.drawCircle(mIndexbarRect.left + paddingLeft / 2 + 15, mIndexbarRect.top + mIndexbarMarginV + sectionHeight * i + paddingTop - indexPaint.ascent() - 15, 30, mBgPaint);
                         } else {
                             indexPaint.setTypeface(setTypeface);
                             indexPaint.setTextSize(setIndexTextSize * mScaledDensity);
                             indexPaint.setColor(indexbarTextColor);
                         }
-                        float paddingLeft = (mIndexbarWidth - indexPaint.measureText(mSections[i])) / 2;
                         canvas.drawText(mSections[i], mIndexbarRect.left + paddingLeft
                                 , mIndexbarRect.top + mIndexbarMarginV + sectionHeight * i + paddingTop - indexPaint.ascent(), indexPaint);
 
@@ -233,11 +239,15 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     }
 
     public void setAdapter(RecyclerView.Adapter adapter) {
-        if (adapter instanceof SectionIndexer) {
+        if (adapter instanceof Indexer) {
             adapter.registerAdapterDataObserver(this);
-            mIndexer = (SectionIndexer) adapter;
+            mIndexer = (Indexer) adapter;
             mSections = (String[]) mIndexer.getSections();
         }
+    }
+
+    public ArrayList<Integer> getIndex() {
+        return mIndexer.getIndex();
     }
 
     @Override
@@ -385,6 +395,13 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
     }
 
     /**
+     * @param color The text color for the mBgCircleColor
+     */
+    public void setBgCircleColor(@ColorInt int color) {
+        mBgCircleColor = color;
+    }
+
+    /**
      * @param color The text color for the index bar
      */
     public void setIndexBarTextColor(@ColorInt int color) {
@@ -405,4 +422,8 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
         setSetIndexBarHighLateTextVisibility = shown;
     }
 
+    public void updatePosition(int position) {
+        mSelectSection = position;
+        mRecyclerView.invalidate();
+    }
 }
