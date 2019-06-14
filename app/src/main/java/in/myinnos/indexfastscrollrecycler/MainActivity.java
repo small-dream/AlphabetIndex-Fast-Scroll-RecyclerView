@@ -1,5 +1,6 @@
 package in.myinnos.indexfastscrollrecycler;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import java.util.ArrayList;
@@ -58,13 +59,13 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setAdapter(new RecyclerViewAdapter(mDataArray));
 
         mRecyclerView.setIndexTextSize(12);
-        mRecyclerView.setIndexBarColor("#33334c");
+        mRecyclerView.setIndexBarColor("#FFFFFF");
         mRecyclerView.setIndexBarCornerRadius(0);
-        mRecyclerView.setIndexBarTransparentValue((float) 0.4);
-        mRecyclerView.setIndexbarMargin(0);
+        //mRecyclerView.setIndexBarTransparentValue((float) 0.4);
+        mRecyclerView.setIndexbarMargin(50);
         mRecyclerView.setIndexbarWidth(40);
         mRecyclerView.setPreviewPadding(0);
-        mRecyclerView.setIndexBarTextColor("#FFFFFF");
+        mRecyclerView.setIndexBarTextColor("#000000");
 
         mRecyclerView.setPreviewTextSize(60);
         mRecyclerView.setPreviewColor("#33334c");
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setPreviewTransparentValue(0.6f);
 
         mRecyclerView.setIndexBarVisibility(true);
-        mRecyclerView.setIndexbarHighLateTextColor("#33334c");
+        mRecyclerView.setIndexbarHighLateTextColor("#FF6B22");
         mRecyclerView.setIndexBarHighLateTextVisibility(true);
     }
 }

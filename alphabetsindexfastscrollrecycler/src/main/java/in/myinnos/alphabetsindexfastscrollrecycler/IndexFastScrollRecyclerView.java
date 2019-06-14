@@ -31,7 +31,7 @@ public class IndexFastScrollRecyclerView extends RecyclerView {
     public int mIndexBarCornerRadius = 5;
     public float mIndexBarTransparentValue = (float) 0.6;
     public @ColorInt
-    int mIndexbarBackgroudColor = Color.BLACK;
+    int mIndexbarBackgroudColor = Color.WHITE;
     public @ColorInt
     int mIndexbarTextColor = Color.WHITE;
     public @ColorInt
