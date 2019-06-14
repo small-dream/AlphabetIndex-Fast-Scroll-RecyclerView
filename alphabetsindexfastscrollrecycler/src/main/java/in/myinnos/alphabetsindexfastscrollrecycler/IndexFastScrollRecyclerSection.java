@@ -8,6 +8,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -150,13 +151,17 @@ public class IndexFastScrollRecyclerSection extends RecyclerView.AdapterDataObse
                 float paddingTop = (sectionHeight - (indexPaint.descent() - indexPaint.ascent())) / 2;
                 for (int i = 0; i < mSections.length; i++) {
                     if (setSetIndexBarHighLateTextVisibility) {
-                        float paddingLeft = (mIndexbarWidth - indexPaint.measureText(mSections[i])) / 2;
+                        float textW = indexPaint.measureText(mSections[i]);
+                        Rect bounds = new Rect();
+                        indexPaint.getTextBounds(mSections[i], 0, mSections[i].length(), bounds);
+                        int height = bounds.height();
+                        float paddingLeft = (mIndexbarWidth - textW) / 2;
                         if (mSelectSection > -1 && i == mSelectSection) {
                             mBgPaint.setColor(mBgCircleColor);
                             indexPaint.setTypeface(setTypeface);
                             indexPaint.setTextSize((setIndexTextSize) * mScaledDensity);
                             indexPaint.setColor(indexbarHighLateTextColor);
-                            canvas.drawCircle(mIndexbarRect.left + paddingLeft / 2 + 15, mIndexbarRect.top + mIndexbarMarginV + sectionHeight * i + paddingTop - indexPaint.ascent() - 15, 30, mBgPaint);
+                            canvas.drawCircle(mIndexbarRect.left + paddingLeft + textW / 2, mIndexbarRect.top + mIndexbarMarginV + sectionHeight * i + paddingTop - indexPaint.ascent() - height / 2f, 30, mBgPaint);
                         } else {
                             indexPaint.setTypeface(setTypeface);
                             indexPaint.setTextSize(setIndexTextSize * mScaledDensity);
